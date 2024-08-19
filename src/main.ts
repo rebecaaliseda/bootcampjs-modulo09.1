@@ -1,4 +1,4 @@
-import { calculaTicket } from './calculaTicket';
-import { productos } from './modelo';
+import { calculaTicket } from './calcularTicketCompra/calculaTicket';
+import { productos } from './calcularTicketCompra/modelo';
 
 console.log(calculaTicket(productos));

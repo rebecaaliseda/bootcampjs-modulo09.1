@@ -1,23 +1,10 @@
 import {
   LineaTicket,
-  TicketFinal,
   ResultadoLineaTicket,
   TipoIva,
   ResultadoTotalTicket,
   TotalPorTipoIva,
-} from './modelo';
-
-export const calculaTicket = (lineasTicket: LineaTicket[]): TicketFinal => {
-  const resultadoLineasTicket = calcularResultadoLineaTicket(lineasTicket);
-  const resultadoTotalTicket = calcularResultadoTotalTicket(resultadoLineasTicket);
-  const resultadoTotalIvaTicket = calcularTotalPorTipoDeIva(resultadoLineasTicket);
-
-  return {
-    lineas: resultadoLineasTicket,
-    total: resultadoTotalTicket,
-    desgloseIva: resultadoTotalIvaTicket,
-  };
-};
+} from '../calcularTicketCompra/modelo';
 
 export const calcularResultadoLineaTicket = (
   lineasTicket: LineaTicket[]
@@ -26,9 +13,9 @@ export const calcularResultadoLineaTicket = (
 
   for (let i = 0; i < lineasTicket.length; i++) {
     const { producto, cantidad } = lineasTicket[i];
-    const precioConIva = redondearNumero(producto.precio * cantidad);
-    const precioSinIva = redondearNumero(
-      calcularPrecioSinIva(producto.precio, producto.tipoIva) * cantidad
+    const precioSinIva = redondearNumero(producto.precio * cantidad);
+    const precioConIva = redondearNumero(
+      calcularPrecioConIva(producto.precio, producto.tipoIva) * cantidad
     );
 
     resultadoLineasTicket = [
@@ -48,12 +35,12 @@ export const calcularResultadoLineaTicket = (
 
 export const redondearNumero = (numero: number) => Number(numero.toFixed(2));
 
-export const calcularPrecioSinIva = (precio: number, tipoDeIva: TipoIva): number => {
+export const calcularPrecioConIva = (precio: number, tipoDeIva: TipoIva): number => {
   const ivaPorcentaje = calcularPorcentajeIva(tipoDeIva);
   const iva = (precio * ivaPorcentaje) / 100;
-  const precioSinIva = redondearNumero(precio - iva);
+  const precioConIva = redondearNumero(precio + iva);
 
-  return precioSinIva;
+  return precioConIva;
 };
 
 export const calcularPorcentajeIva = (tipoDeIva: TipoIva): number => {

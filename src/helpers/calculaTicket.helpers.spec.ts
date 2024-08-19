@@ -1,99 +1,17 @@
 import {
-  calculaTicket,
   calcularPorcentajeIva,
-  calcularPrecioSinIva,
+  calcularPrecioConIva,
   calcularResultadoTotalTicket,
   calcularResultadoLineaTicket,
   calcularTotalPorTipoDeIva,
-} from './calculaTicket';
+} from '../helpers/calculaTicket.helpers';
+
 import {
   LineaTicket,
-  TicketFinal,
   ResultadoLineaTicket,
   ResultadoTotalTicket,
   TotalPorTipoIva,
-} from './modelo';
-
-describe('calculaTicket', () => {
-  it('Deberá devolver el ticket total de la compra', () => {
-    //Arrange
-    const lineaTicket: LineaTicket[] = [
-      {
-        producto: { nombre: 'Legumbres', precio: 2, tipoIva: 'general' },
-        cantidad: 2,
-      },
-      {
-        producto: { nombre: 'Perfume', precio: 20, tipoIva: 'general' },
-        cantidad: 3,
-      },
-      {
-        producto: { nombre: 'Leche', precio: 1, tipoIva: 'superreducidoC' },
-        cantidad: 6,
-      },
-      {
-        producto: { nombre: 'Lasaña', precio: 5, tipoIva: 'superreducidoA' },
-        cantidad: 1,
-      },
-    ];
-
-    //Act
-    const resultado: TicketFinal = calculaTicket(lineaTicket);
-    //Assert
-    const resultadoEsperado: TicketFinal = {
-      lineas: [
-        {
-          nombre: 'Legumbres',
-          cantidad: 2,
-          precioSinIva: 3.16,
-          tipoIva: 'general',
-          precioConIva: 4,
-        },
-        {
-          nombre: 'Perfume',
-          cantidad: 3,
-          precioSinIva: 47.4,
-          tipoIva: 'general',
-          precioConIva: 60,
-        },
-        {
-          nombre: 'Leche',
-          cantidad: 6,
-          precioSinIva: 6,
-          tipoIva: 'superreducidoC',
-          precioConIva: 6,
-        },
-        {
-          nombre: 'Lasaña',
-          cantidad: 1,
-          precioSinIva: 4.75,
-          tipoIva: 'superreducidoA',
-          precioConIva: 5,
-        },
-      ],
-      total: {
-        totalSinIva: 61.31,
-        totalConIva: 75,
-        totalIva: 13.69,
-      },
-
-      desgloseIva: [
-        {
-          tipoIva: 'general',
-          cuantia: 13.44,
-        },
-        {
-          tipoIva: 'superreducidoC',
-          cuantia: 0,
-        },
-        {
-          tipoIva: 'superreducidoA',
-          cuantia: 0.25,
-        },
-      ],
-    };
-    expect(resultado).toEqual(resultadoEsperado);
-  });
-});
+} from '../calcularTicketCompra/modelo';
 
 describe('calcularResultadoLineaTicket', () => {
   it('Deberá devolver el resultado de las líneas del ticket que dependerá de los productos de entrada que le pasemos', () => {
@@ -111,9 +29,9 @@ describe('calcularResultadoLineaTicket', () => {
       {
         nombre: 'Legumbres',
         cantidad: 2,
-        precioSinIva: 3.16,
+        precioSinIva: 4,
         tipoIva: 'general',
-        precioConIva: 4,
+        precioConIva: 4.84,
       },
     ];
     expect(resultado).toEqual(resultadoEsperado);
@@ -134,28 +52,28 @@ describe('calcularResultadoLineaTicket', () => {
       {
         nombre: 'Lasaña',
         cantidad: 1,
-        precioSinIva: 4.75,
+        precioSinIva: 5,
         tipoIva: 'superreducidoA',
-        precioConIva: 5,
+        precioConIva: 5.25,
       },
     ];
     expect(resultado).toEqual(resultadoEsperado);
   });
 });
 
-describe('calcularPrecioSinIva', () => {
+describe('calcularPrecioConIva', () => {
   it.each([
-    [20, 'general', 15.8],
-    [10, 'reducido', 9],
-    [15, 'superreducidoA', 14.25],
-    [5, 'superreducidoB', 4.8],
+    [20, 'general', 24.2],
+    [10, 'reducido', 11],
+    [15, 'superreducidoA', 15.75],
+    [5, 'superreducidoB', 5.2],
     [2, 'superreducidoC', 2],
     [3, 'sinIva', 3],
   ])(
     'Deberá devolver el precio sin iva correspondiente teniendo en cuenta el precio y tipo de IVA que le pasemos en cada caso',
     (precio: number, tipoDeIva: any, resultadoEsperado: number) => {
       //Act
-      const resultado: number = calcularPrecioSinIva(precio, tipoDeIva);
+      const resultado: number = calcularPrecioConIva(precio, tipoDeIva);
       //Assert
       expect(resultado).toBe(resultadoEsperado);
     }
